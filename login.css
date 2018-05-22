@@ -1,0 +1,21 @@
+#container{
+	background:#00aced;
+	height:400px;
+	width:800px;
+	margin-left:auto;
+	margin-right:auto;
+}
+#main{
+	padding-bottom:20px;
+	color:white;
+	background:#0080ff;
+	text-align:center;
+	
+}
+
+
+#login:hover{
+	background-color:#008CBA;
+	color:white;
+	
+}
