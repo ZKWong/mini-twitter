@@ -1,0 +1,78 @@
+body{
+	margin-left:20px;
+	background:#00aced;
+}
+#header{
+	background:#808080;
+	text-align: center;
+	width: 98.5%;
+	
+}
+#name{
+	font-weight:bold;
+	color:white;
+	
+}
+#sidebar-left{
+	float:left;
+	width:25%;
+	background: #00aced;
+	margin-top: 5px;	
+	margin-bottom:5px;
+}
+#content{
+	float:left;
+	width:73%;
+	background: white;
+	margin-left:5px;
+	margin-right:5px;
+	margin-top: 5px;
+	min-height:600px;
+	overflow: scroll;
+}
+#contentHeader{
+	font-weight:bold;
+	font-size:110%;
+	text-align:center;
+}
+#contentStyle{
+	line-height:150%;
+	font-style:italic;
+	padding:10px;
+	
+}
+
+#footer{
+	clear:both;
+	width: 98.5%;
+	text-align: center;
+	font-size: 150%;
+	background:#808080;
+	
+	}
+#sidebar-left, #sidebar-right{
+	min-height: 600px;				
+}
+#profile{
+	background: white;
+	width: 95%;
+	height: 290px;
+}
+#profileHeader{
+	font-weight:bold;
+	font-size:110%;
+	text-align:center;
+}
+#suggestion{
+	background: white;
+	margin-top: 10px;
+	width: 95%;
+	height: 290px;
+}
+#sugHeader{
+	font-weight:bold;
+	font-size:110%;
+	text-align:center;
+}
+
+
