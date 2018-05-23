@@ -12,7 +12,16 @@
 	text-align:center;
 	
 }
-
+#bleft{
+	width:40%;
+	float:left;
+  color: white;
+	padding-left: 10px;
+}
+#bright{
+	width:40%;
+	float:right;
+}
 
 #login:hover{
 	background-color:#008CBA;
