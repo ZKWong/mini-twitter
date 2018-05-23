@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mini-Twitter</title>
+<script src='vue2516.js'></script>
+<link rel ='stylesheet' type = 'text/css' href = 'login.css'/>
+</head>
+<div id='container'>
+	<div id='main'>
+	<h1>Mini Twitter</h1>
+	 Username:&#160; <input v-model = 'username' >
+	 Password:&#160; <input v-model = 'password' type ='password'>
+	<button v-on:click='login()' id = 'login'>Login</button>
+	</div>
+	<div id ='bleft'>
+		<h2>Don't have an account? Register one!</h2>
+	</div>
+	<div id ='bright'>
+	 <p><input v-model = 'newusername' placeholder = "new username" ></p>
+	 <p><input v-model = 'newpassword' type ='password' placeholder = "new password"></p>
+	 <p><button v-on:click='signup()' id = "Sign Up">Sign Up</button></p>
+	</div>
+	<div style = "clear:both;"></div>
+</div>
+</html>
+<script>
+	var main = new Vue({
+   el: '#main',
+   data: {
+			username: '',
+     password: ''
+   },
+   methods: {
+     login: function(){
+       checklogin(this.username,this.password);     }
+   }
+ })
+ var bright = new Vue({
+   el: '#bright',
+   data: {
+		 newusername: '',
+     newpassword: ''
+   },
+   methods: {
+     signup: function(){
+       new_signup(this.newusername,this.newpassword);     }
+   }
+ })
+ function checklogin(usrname,pwd) {
+   var xhr = new XMLHttpRequest();
+	// Register the embedded handler function
+	  xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			var loginresult = xhr.responseText;
+     //alert(loginresult);
+			if (loginresult == "1"){
+				document.location.replace("homepage.html");
+			}
+			else{
+				alert("login failed");
+			}		
+		}
+	}
+	xhr.open('GET', 'checklogin?username=' + usrname + '&password=' + pwd);
+	xhr.send(null);
+ }
+ function new_signup(new_usrname,new_pwd) {
+   var xhr = new XMLHttpRequest();
+	// Register the embedded handler function
+	  xhr.onreadystatechange = function () {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			var signup_result = xhr.responseText;
+     alert(signup_result);		
+		}
+	}
+	xhr.open('GET', 'new_signup?new_username=' + new_usrname + '&new_password=' + new_pwd);
+	xhr.send(null);
+ }
+</script>
