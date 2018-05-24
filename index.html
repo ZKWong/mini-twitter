@@ -5,6 +5,7 @@
 <script src='vue2516.js'></script>
 <link rel ='stylesheet' type = 'text/css' href = 'login.css'/>
 </head>
+<body>
 <div id='container'>
 	<div id='main'>
 	<h1>Mini Twitter</h1>
@@ -18,17 +19,18 @@
 	<div id ='bright'>
 	 <p><input v-model = 'newusername' placeholder = "new username" ></p>
 	 <p><input v-model = 'newpassword' type ='password' placeholder = "new password"></p>
-	 <p><button v-on:click='signup()' id = "Sign Up">Sign Up</button></p>
+	 <p><button v-on:click='signup()' id = "signup">Sign Up</button></p>
 	</div>
 	<div style = "clear:both;"></div>
 </div>
+</body>
 </html>
 <script>
 	var main = new Vue({
    el: '#main',
    data: {
-			username: '',
-     password: ''
+		username: '',
+    password: ''
    },
    methods: {
      login: function(){
@@ -54,10 +56,10 @@
 			var loginresult = xhr.responseText;
      //alert(loginresult);
 			if (loginresult == "1"){
-				document.location.replace("homepage.html");
+				document.location.replace("homepage.html?username="+usrname);
 			}
 			else{
-				alert("login failed");
+				alert("Login Failed");
 			}		
 		}
 	}
