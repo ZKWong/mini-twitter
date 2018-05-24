@@ -46,10 +46,9 @@ body{
 	clear:both;
 	width: 98.5%;
 	text-align: center;
-	font-size: 150%;
 	background:#808080;
-	
-	}
+}
+
 #sidebar-left, #sidebar-right{
 	min-height: 600px;				
 }
@@ -73,6 +72,11 @@ body{
 	font-weight:bold;
 	font-size:110%;
 	text-align:center;
+}
+#tweet{
+	background-color:#33bbff;
+	color: white;
+	border-radius: 12px;
 }
 
 
