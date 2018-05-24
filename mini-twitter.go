@@ -8,7 +8,39 @@ import (
 		"bufio"
 		"os"
 		"strings"
+		
 )
+
+func postmessage_page(r *http.Request, sHtml *string) {
+	var username string
+	var msg string
+
+	r.ParseForm()
+	for key, value:= range r.Form{
+		if key == "username" {
+			username = fmt.Sprintf("%s",value)
+			username = username[1:len(username)-1]
+		}
+		if key == "msg" {
+			msg = fmt.Sprintf("%s",value)
+			msg = msg[1:len(msg)-1]
+		}
+	}
+
+	file,err := os.OpenFile(username+"_pmsg", os.O_APPEND|os.O_RDWR|os.O_CREATE,0644)
+	if err != nil {fmt.Print(err)}	
+	
+	if _, err := file.Write([]byte(msg +"\n")); err != nil{
+		fmt.Print(err)
+	}
+	if err := file.Close(); err != nil{
+		fmt.Print(err)
+	}
+
+	*sHtml = "ok"
+	return
+
+}
 
 func getfile(sFile string, sHtml *string){
 	b, err := ioutil.ReadFile(sFile)
@@ -31,8 +63,14 @@ func checklogin_page(r *http.Request, sHtml *string) {
 
 	r.ParseForm()
 	for key, value:= range r.Form{
-		if key == "username" {username = fmt.Sprintf("%s",value)}
-		if key == "password" {password = fmt.Sprintf("%s",value)}
+		if key == "username" {
+			username = fmt.Sprintf("%s",value)
+			username = username[1:len(username)-1]
+		}
+		if key == "password" {
+			password = fmt.Sprintf("%s",value)
+			password = password[1:len(password)-1]
+		}
 	}
 
 	file,err := os.Open("tbusers")
@@ -68,24 +106,34 @@ func new_signup_page(r *http.Request, sHtml *string) {  //Check if input is empt
 
 	*sHtml = "Sign up failed " + new_username +" "+  new_password
 
+	new_username = ""
+	new_password = ""
+
 	r.ParseForm()
 	for key, value:= range r.Form{
-		if key == "new_username" {new_username = fmt.Sprintf("%s",value)}
-		if key == "new_password" {new_password = fmt.Sprintf("%s",value)}
+		if key == "new_username" {
+			new_username = fmt.Sprintf("%s",value)
+			new_username = new_username[1:len(new_username)-1]
+		}
+		if key == "new_password" {
+			new_password = fmt.Sprintf("%s",value)
+			new_password = new_password[1:len(new_password)-1]
+		}
 	}
-	//fmt.Printf("new_username: %s  new_password: %s\n",new_username,new_password)
+	if new_username =="" || new_password ==""{
+		*sHtml = "Username or Password cannot be empty"
+		return
+	}
 
-	file,err := os.OpenFile("tbusers", os.O_APPEND|os.O_RDWR|os.O_CREATE,0644)//,err
+	file,err := os.OpenFile("tbusers", os.O_APPEND|os.O_RDWR|os.O_CREATE,0644)
 	if err != nil {fmt.Print(err)}	
 	defer file.Close()
+
 	scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			querystr  = strings.Split(scanner.Text(),"&")
 			key_value = strings.Split(querystr[0],"=")
 			if key_value[0]=="username" {new_usrname=key_value[1]}
-			//fmt.Printf("%s %s %s %s\n",key_value[0],key_value[1],new_username,new_usrname)
-			//key_value = strings.Split(querystr[1],"=")
-			//if key_value[0]=="new_password" {new_pwd=key_value[1]}
 			if new_username==new_usrname{
 				*sHtml = "Username already exist"
 				return
@@ -123,17 +171,30 @@ func web_response(w http.ResponseWriter, r *http.Request) {
 
 			case "homepage.html":
 				getfile("homepage.html",&sHtml)
+				r.ParseForm()
+				for key, value:= range r.Form{
+					if key == "username" {
+						uname := fmt.Sprintf("%s",value)
+						uname = uname[1:len(uname)-1]
+						sHtml = strings.Replace(sHtml,"$username",uname,2)
+						break
+					}
+				}
 	
 			case "homepage.css" :
 				w.Header().Add("Content-Type","text/css")
 				getfile("homepage.css",&sHtml)
 
+			case "postmessage":
+				postmessage_page(r,&sHtml)
+				
 			default:
 				getfile("index.html",&sHtml)
 		}
 						
 	  fmt.Fprintf(w,"%s",sHtml)
 }
+
 
 func main() {
     http.HandleFunc("/", web_response)
