@@ -23,8 +23,17 @@
 	float:right;
 }
 
-#login:hover{
-	background-color:#008CBA;
+#login{
+	background-color:#33bbff;
+	border-radius: 12px;
 	color:white;
-	
+}
+#login:hover{
+	background-color:#00aced;
+}
+
+#signup{
+	background-color:#0080ff;
+	border-radius: 12px;
+	color:white;
 }
