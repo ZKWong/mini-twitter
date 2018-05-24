@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<script src='vue2516.js'></script>
 		<link rel="stylesheet"  type = "text/css" href="homepage.css" /> 
 		<title>Mini-Twitter Homepage </title>
 	</head>
@@ -13,24 +14,65 @@
 		<div id="sidebar-left">
 			<div id="profile">
 				<div id = "profileHeader">Profile</div>
-				Welcome User
+				&#160;Welcome $username
 			</div>
 			
 			<div id="suggestion">
 				<div id="sugHeader">Suggestion</div>
-				Your following
+				Followers
 			</div>
 		
 		</div>
 
 		<div id="content">
-			Tweets<br>
-			Work is in progress
+			<textarea v-model = 'writepost' cols = '140' placeholder = "What is on your mind?"></textarea>
+			<button v-on:click='tweet()' id = "tweet">Tweet</button>
+			<textarea v-model = 'displaypost' rows = '50' cols = '140' id=displaypost></textarea>
 		</div>
 		
 		
 		<div id="footer">
-		logout
+			<button v-on:click='logout()' id = "logout">Logout</button>
 		</div>
 	</body>
 </html>
+
+<script>
+	var usrname = '$username'
+	var content = new Vue({
+		el: '#content',
+		data: {
+			writepost: '',
+			displaypost: '',
+		},
+		methods: {
+			tweet: function(){
+				if (this.writepost == "") {
+					alert("write post must not be empty")
+					return false
+				}
+				this.displaypost = this.displaypost + this.writepost + "\n"
+				var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						var postresult = xhr.responseText;
+					}
+				}
+				xhr.open('GET', 'postmessage?username=' + usrname + '&msg=' + this.writepost);
+				xhr.send(null);
+			}
+		}
+
+	})	
+
+	var footer = new Vue({
+   el: '#footer',
+   methods: {
+     logout: function(){
+       logout();     }
+   }
+ 	})
+	function logout(){
+		document.location.replace("/");
+	}
+</script>
