@@ -8,6 +8,7 @@ import (
 		"bufio"
 		"os"
 		"strings"
+		"time"
 		
 )
 
@@ -30,6 +31,9 @@ func postmessage_page(r *http.Request, sHtml *string) {
 	file,err := os.OpenFile(username+"_pmsg", os.O_APPEND|os.O_RDWR|os.O_CREATE,0644)
 	if err != nil {fmt.Print(err)}	
 	
+	timevalue := fmt.Sprintf("%s",time.Now())
+	timestr   := strings.Split(timevalue,".")
+	msg = "[" + timestr[0] + "] " + msg
 	if _, err := file.Write([]byte(msg +"\n")); err != nil{
 		fmt.Print(err)
 	}
@@ -151,9 +155,84 @@ func new_signup_page(r *http.Request, sHtml *string) {  //Check if input is empt
 	return
 }
 
+func homepage(r *http.Request,sHtml *string) {
+	var uname string
+	var usrname string
+	var following string
+	var querystr []string
+	var key_value []string
+
+	uname = ""
+	following = ""
+	getfile("homepage.html",sHtml)
+	r.ParseForm()
+	for key, value:= range r.Form{
+		if key == "username" {
+			uname = fmt.Sprintf("%s",value)
+			uname = uname[1:len(uname)-1]
+			*sHtml = strings.Replace(*sHtml,"$username",uname,2)
+			break
+		}
+	}
+	if uname != "" {
+		if _,err := os.Stat(uname + "_pmsg"); err == nil{
+			var content_msg string
+			getfile(uname + "_pmsg",&content_msg)
+			content_msg = strings.Replace(content_msg,"\n","\\n",-1)
+			*sHtml = strings.Replace(*sHtml,"$content",content_msg,1)
+		}
+		if _,err := os.Stat(uname + "_pmsg"); os.IsNotExist(err){
+			*sHtml = strings.Replace(*sHtml,"$content","",1)
+		}
+	}
+	file,err := os.Open("tbusers")
+	if err != nil {
+		fmt.Print(err)
+	}	
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		querystr  = strings.Split(scanner.Text(),"&")
+		key_value = strings.Split(querystr[0],"=")
+		if key_value[0]=="username" {
+			usrname=key_value[1]
+			following = following + "<tr id = 'folname' v-on:click=\"follow('" + usrname + "')\"><td>" + usrname + "</td></tr>\n"
+		}
+	}
+	if following != "" {
+		following = "<table >\n" + "<tr ><th> Following </th></tr>\n" + following + "</table>\n" 
+	}
+	*sHtml = strings.Replace(*sHtml,"$following",following,1)
+	return
+}
+
+func get_followmsg(r *http.Request,sHtml *string){
+	var uname string
+	
+  uname = ""
+  
+	r.ParseForm()
+	for key, value:= range r.Form{
+		if key == "username" {
+			uname = fmt.Sprintf("%s",value)
+			uname = uname[1:len(uname)-1]
+			break
+		}
+	}
+	if uname != "" {
+		if _,err := os.Stat(uname + "_pmsg"); err == nil{
+			var content_msg string
+			getfile(uname + "_pmsg",&content_msg)
+			*sHtml = content_msg
+		}
+		if _,err := os.Stat(uname + "_pmsg"); os.IsNotExist(err){
+			*sHtml = ""
+		}
+	}
+}
 
 func web_response(w http.ResponseWriter, r *http.Request) {
-		var sHtml string
+	var sHtml string
 		
 		switch r.URL.Path[1:] {
 			case "vue2516.js": 
@@ -170,16 +249,7 @@ func web_response(w http.ResponseWriter, r *http.Request) {
 				new_signup_page(r, &sHtml)
 
 			case "homepage.html":
-				getfile("homepage.html",&sHtml)
-				r.ParseForm()
-				for key, value:= range r.Form{
-					if key == "username" {
-						uname := fmt.Sprintf("%s",value)
-						uname = uname[1:len(uname)-1]
-						sHtml = strings.Replace(sHtml,"$username",uname,2)
-						break
-					}
-				}
+				homepage(r,&sHtml) //pass by reference
 	
 			case "homepage.css" :
 				w.Header().Add("Content-Type","text/css")
@@ -187,7 +257,10 @@ func web_response(w http.ResponseWriter, r *http.Request) {
 
 			case "postmessage":
 				postmessage_page(r,&sHtml)
-				
+
+			case "get_followmsg":
+				get_followmsg(r, &sHtml)
+
 			default:
 				getfile("index.html",&sHtml)
 		}
