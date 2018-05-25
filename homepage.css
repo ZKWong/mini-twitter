@@ -15,14 +15,14 @@ body{
 }
 #sidebar-left{
 	float:left;
-	width:25%;
+	width:16%;
 	background: #00aced;
 	margin-top: 5px;	
 	margin-bottom:5px;
 }
 #content{
 	float:left;
-	width:73%;
+	width:82%;
 	background: white;
 	margin-left:5px;
 	margin-right:5px;
@@ -59,24 +59,29 @@ body{
 }
 #profileHeader{
 	font-weight:bold;
-	font-size:110%;
-	text-align:center;
 }
-#suggestion{
+#following{
 	background: white;
 	margin-top: 10px;
 	width: 95%;
 	height: 290px;
+	cursor: pointer;
+	overflow: scroll;
+	
 }
-#sugHeader{
-	font-weight:bold;
-	font-size:110%;
-	text-align:center;
+#folname:hover{
+	background-color: #00aced;
+	color:white;
 }
+
 #tweet{
 	background-color:#33bbff;
 	color: white;
 	border-radius: 12px;
+}
+#logout{
+	color: white;
+	background-color: #808080;
 }
 
 
