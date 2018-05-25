@@ -9,41 +9,42 @@
 	<body>
 		<div id="header">
 			<div id="name">Mini Twitter Home</div>
+			<button v-on:click='logout()' id = "logout">Logout</button>
 		</div>
 
 		<div id="sidebar-left">
 			<div id="profile">
 				<div id = "profileHeader">Profile</div>
-				&#160;Welcome $username
+				Welcome $username
 			</div>
 			
-			<div id="suggestion">
-				<div id="sugHeader">Suggestion</div>
-				Followers
+			<div id="following">
+				$following
 			</div>
 		
 		</div>
 
 		<div id="content">
-			<textarea v-model = 'writepost' cols = '140' placeholder = "What is on your mind?"></textarea>
+			<textarea v-model = 'writepost' cols = '135' placeholder = "What is on your mind?"></textarea>
 			<button v-on:click='tweet()' id = "tweet">Tweet</button>
-			<textarea v-model = 'displaypost' rows = '50' cols = '140' id=displaypost></textarea>
+			<textarea v-model = 'displaypost' rows = '35' cols = '135' id=displaypost></textarea>
 		</div>
 		
 		
 		<div id="footer">
-			<button v-on:click='logout()' id = "logout">Logout</button>
+			
 		</div>
 	</body>
 </html>
 
 <script>
 	var usrname = '$username'
+	
 	var content = new Vue({
 		el: '#content',
 		data: {
 			writepost: '',
-			displaypost: '',
+			displaypost: '$content',
 		},
 		methods: {
 			tweet: function(){
@@ -51,7 +52,14 @@
 					alert("write post must not be empty")
 					return false
 				}
-				this.displaypost = this.displaypost + this.writepost + "\n"
+				var curdate = new Date();
+				var timestr = curdate.getFullYear() + '-'; //+ curdate.getMonth() + '-' + curdate.getDate() + ' ' + curdate.getHours() + ':' +  curdate.getMinutes()+ ':' + curdate.getSeconds();
+				timestr = timestr + (((curdate.getMonth())+1 < 10) ? '0' + ((curdate.getMonth())+1) : (curdate.getMonth())+1) + '-';
+				timestr = timestr + (((curdate.getDate())< 10) ? '0' + ((curdate.getDate())) : (curdate.getDate())) + ' ';
+				timestr = timestr + (((curdate.getHours())< 10) ? '0' + ((curdate.getHours())) : (curdate.getHours())) + ':';
+				timestr = timestr + (((curdate.getMinutes())< 10) ? '0' + ((curdate.getMinutes())) : (curdate.getMinutes())) + ':';
+				timestr = timestr + (((curdate.getSeconds())< 10) ? '0' + ((curdate.getSeconds())) : (curdate.getSeconds()));
+				this.displaypost = this.displaypost + '[' + timestr + '] ' + this.writepost + "\n"
 				var xhr = new XMLHttpRequest();
 					xhr.onreadystatechange = function () {
 					if (xhr.readyState == 4 && xhr.status == 200) {
@@ -65,14 +73,32 @@
 
 	})	
 
-	var footer = new Vue({
-   el: '#footer',
+	var header = new Vue({
+   el: '#header',
    methods: {
      logout: function(){
        logout();     }
    }
  	})
+
+	var following = new Vue({
+   el: '#following',
+   methods: {
+     follow: function(username){
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function () {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						var followmsg = xhr.responseText;
+						content.displaypost = followmsg;
+					}
+				}
+				xhr.open('GET', 'get_followmsg?username=' + username);
+				xhr.send(null);      
+		}
+   }
+ 	})
 	function logout(){
 		document.location.replace("/");
 	}
+	
 </script>
